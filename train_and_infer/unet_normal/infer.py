@@ -10,9 +10,9 @@ from tqdm import tqdm
 import torch
 from torch.utils.data import DataLoader
 
-from detection_models.models.unet_kld import NormalUNETSpikeletsNet
+from detection_models.models.unet_normal import NormalUNETSpikeletsNet
 from detection_models.utils.normal_mask_utils import get_central_points_normal_mask
-from detection_models.datasets_and_augmentations.dataset_unet_kld import NormalSpikeletsInferDataset
+from detection_models.datasets_and_augmentations.dataset_unet_normal import NormalSpikeletsInferDataset
 
 
 @torch.no_grad()
@@ -44,7 +44,7 @@ def infer_kld(infer_dl, model, out_dir_path, device='cuda', scale=5.5):
                              columns=['Name', 'Spikelets Centers'], index=None)
     df_coords.to_csv(os.path.join(out_dir_path, 'coordinates.csv'), index=False)
 
-@hydra.main(version_base=None, config_path='.', config_name='config_kld')
+@hydra.main(version_base=None, config_path='.', config_name='config_normal')
 def main(cfg: DictConfig):
     infer_ds = NormalSpikeletsInferDataset(cfg.infer_params.in_dir_path, 
                                            cfg.infer_params.segmentation_mask_dir_path, 

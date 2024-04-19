@@ -8,7 +8,7 @@ from scipy.ndimage.filters import maximum_filter, minimum_filter
 def get_centers_normal_mask(normal_mask: np.ndarray, scale=3):
     max_val = normal_mask.max()
     max_filter = maximum_filter(normal_mask, 3)
-    max_filter = np.where(max_filter < max_val/scale, 0, max_filter)
+    max_filter = np.where(max_filter < max_val/scale, -1, max_filter)
     return np.where(normal_mask == max_filter)
 
 def get_central_points_normal_mask(mask, scale=3):
@@ -161,8 +161,8 @@ def generate_masks_with_colorchecker_scale(shape: tp.Tuple[int, int],
     return generate_sum_normal_mask(shape, coords,
                                     scale, standard_mask, min_val, standard_mask_scale)
 
-def get_random_crops(img: np.ndarray, mask: np.ndarray, mask_points: np.ndarray, coords: list[tuple[int, int]],
-                    gap_0: int = 0, gap_1: int = 0, random: bool = True) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+def get_random_crops(img: np.ndarray, mask: np.ndarray, mask_points: np.ndarray, coords: tp.List[tp.Tuple[int, int]],
+                    gap_0: int = 0, gap_1: int = 0, random: bool = True) -> tp.Tuple[np.ndarray, np.ndarray, np.ndarray]:
     crop_img = deepcopy(img)
     all_plant_mask = mask[..., 0].astype('int32') + mask[..., 1].astype('int32')
     all_plant_mask = np.where(all_plant_mask > 0, 1, 0).astype('uint8')

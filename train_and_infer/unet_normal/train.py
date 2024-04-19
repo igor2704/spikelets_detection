@@ -7,11 +7,11 @@ from torch.utils.data import DataLoader
 from pytorch_lightning.callbacks import ModelCheckpoint
 from pytorch_lightning.callbacks.early_stopping import EarlyStopping
 
-from detection_models.datasets_and_augmentations.dataset_unet_kld import NormalSpikeletsDataset
-from detection_models.models.unet_kld import NormalUNETSpikeletsNet
+from detection_models.datasets_and_augmentations.dataset_unet_normal import NormalSpikeletsDataset
+from detection_models.models.unet_normal import NormalUNETSpikeletsNet
 
 
-@hydra.main(version_base=None, config_path='.', config_name='config_kld')
+@hydra.main(version_base=None, config_path='.', config_name='config_normal')
 def main(cfg: DictConfig):
     wandb_log = True
     if cfg.pathes.wandb_project == '' or  cfg.pathes.wandb_name == '':
@@ -38,11 +38,11 @@ def main(cfg: DictConfig):
                         num_workers=cfg.training_params.num_workers, shuffle=False)
     
     MyTrainingModuleCheckpoint = ModelCheckpoint(dirpath=cfg.pathes.dirpath_models_saving,
-                                            filename='unet_kld_{epoch}-{val_f1:.3f}' + f'_{cfg.model_params.encoder_name}',
-                                            monitor='val_f1',
-                                            mode='max',
+                                            filename='unet_normal_{epoch}-{val_f1:.3f}' + f'_{cfg.model_params.encoder_name}',
+                                            monitor='val_mae',
+                                            mode='min',
                                             save_top_k=1)
-    MyEarlyStopping = EarlyStopping(monitor='val_f1', mode='max', 
+    MyEarlyStopping = EarlyStopping(monitor='val_mae', mode='min', 
                                     patience=cfg.training_params.patience, verbose=True)
     callbacks = [MyEarlyStopping, MyTrainingModuleCheckpoint]
 
@@ -52,7 +52,8 @@ def main(cfg: DictConfig):
         accelerator=cfg.training_params.accelerator,
         callbacks=callbacks
     )
-    module = NormalUNETSpikeletsNet(lr=cfg.model_params.lr,
+    module = NormalUNETSpikeletsNet(loss=cfg.model_params.loss,
+                                    lr=cfg.model_params.lr,
                                     max_epochs=cfg.training_params.max_epochs,
                                     encoder_name=cfg.model_params.encoder_name,
                                     wandb_log=wandb_log,

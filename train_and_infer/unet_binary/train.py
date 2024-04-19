@@ -7,11 +7,11 @@ from torch.utils.data import DataLoader
 from pytorch_lightning.callbacks import ModelCheckpoint
 from pytorch_lightning.callbacks.early_stopping import EarlyStopping
 
-from detection_models.datasets_and_augmentations.dataset_unet_bce import SpikeletsDataset
-from detection_models.models.unet_bce import UNETSpikeletsNet
+from detection_models.datasets_and_augmentations.dataset_unet_binary import SpikeletsDataset
+from detection_models.models.unet_binary import UNETSpikeletsNet
 
 
-@hydra.main(version_base=None, config_path='.', config_name='config_bce')
+@hydra.main(version_base=None, config_path='.', config_name='config_binary')
 def main(cfg: DictConfig):
     wandb_log = True
     if cfg.pathes.wandb_project == '' or  cfg.pathes.wandb_name == '':
@@ -30,7 +30,7 @@ def main(cfg: DictConfig):
                         num_workers=cfg.training_params.num_workers, shuffle=False)
     
     MyTrainingModuleCheckpoint = ModelCheckpoint(dirpath=cfg.pathes.dirpath_models_saving,
-                                            filename='unet_bce_{epoch}-{val_f1:.3f}' + f'_{cfg.model_params.encoder_name}',
+                                            filename='unet_binary_{epoch}-{val_f1:.3f}' + f'_{cfg.model_params.encoder_name}',
                                             monitor='val_f1',
                                             mode='max',
                                             save_top_k=1)

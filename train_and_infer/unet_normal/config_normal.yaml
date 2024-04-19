@@ -1,14 +1,15 @@
 model_params:
-    lr: 0.0009
+    loss: 'kld' # or 'kld'
+    lr: 0.0007083
     encoder_name: 'efficientnet-b4' 
     warmup_duration: 5
     warmup_start_factor: 0.0001
-    cos_annealing_eta_min: 0.00001
+    cos_annealing_eta_min: 0.00005
     threshold_scale_true_mask: 3
-    threshold_scale_pred_mask: 5.5
+    threshold_scale_pred_mask: 4.752
 mask_params:
-    min_val: 0.00000000000000000000000000000000001
-    coeff: 25000
+    min_val: 0.0
+    coeff: 35531.427
     standard_mask_scale: 30000
 augmentation_params:
     image_height: 512
@@ -42,30 +43,36 @@ training_params:
 infer_params:
     in_dir_path: '/home/jupyter-igor_busov/detection/data/holdout'
     out_dir_path: '/home/jupyter-igor_busov/detection/infer_example'
-    model_path: '/home/jupyter-igor_busov/detection/models_checkpoints/unet_kld_epoch=121-val_f1=0.841.ckpt'
+    model_path: '/home/jupyter-igor_busov/detection/models/unet_kld_final.ckpt'
     segmentation_mask_dir_path: '/home/jupyter-igor_busov/detection/data/holdout_mask_segmentation'
     batch_size: 8
     device: 'cuda'
     num_workers: 23
+test_params:
+    model_path: '/home/jupyter-igor_busov/detection/models/unet_kld_final.ckpt'
+    out_json_file_name: '/home/jupyter-igor_busov/detection/test_result/test_res.json'
+    batch_size: 8
+    device: 'cuda'
+    num_workers: 23
 pathes:
-    wandb_project: 'example_1'
-    wandb_name: 'example'
+    wandb_project: 'final_detection_models'
+    wandb_name: 'ce'
     dirpath_models_saving: '/home/jupyter-igor_busov/detection/models'
     train_path: '/home/jupyter-igor_busov/detection/data/train'
     test_path: '/home/jupyter-igor_busov/detection/data/test'
     val_path: '/home/jupyter-igor_busov/detection/data/val'
-    holdout_path: '/home/jupyter-igor_busov/detection/data/holdout'
+    # test_path: '/home/jupyter-igor_busov/detection/data/holdout'
     train_mask_path: '/home/jupyter-igor_busov/detection/data/train_mask'
     test_mask_path: '/home/jupyter-igor_busov/detection/data/test_mask'
     val_mask_path: '/home/jupyter-igor_busov/detection/data/val_mask'
-    holdout_mask_path: '/home/jupyter-igor_busov/detection/data/holdout_mask'
+    # test_mask_path: '/home/jupyter-igor_busov/detection/data/holdout_mask'
     train_mask_segment_path: '/home/jupyter-igor_busov/detection/data/train_mask_segmentation'
     test_mask_segment_path: '/home/jupyter-igor_busov/detection/data/test_mask_segmentation'
     val_mask_segment_path: '/home/jupyter-igor_busov/detection/data/val_mask_segmentation'
-    holdout_mask_segment_path: '/home/jupyter-igor_busov/detection/data/holdout_mask_segmentation'
+    # test_mask_segment_path: '/home/jupyter-igor_busov/detection/data/holdout_mask_segmentation'
     train_json_coords_path: '/home/jupyter-igor_busov/detection/data/centers/train.json'
     val_json_coords_path: '/home/jupyter-igor_busov/detection/data/centers/val.json'
     test_json_coords_path: '/home/jupyter-igor_busov/detection/data/centers/test.json'
-    holdout_json_coords_path: '/home/jupyter-igor_busov/detection/data/centers/holdout.json'
+    # test_json_coords_path: '/home/jupyter-igor_busov/detection/data/centers/holdout.json'
     standard_mask_path: '/home/jupyter-igor_busov/detection/detection_models/standard_normal_mask.npy'
     

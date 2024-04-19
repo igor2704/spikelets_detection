@@ -48,7 +48,7 @@ def get_crop(mask: np.ndarray, eps_x: int = 350, eps_y: int = 200) -> np.ndarray
     return d_cr, u_cr, l_cr, r_cr
 
 def get_random_crops(img: np.ndarray, mask: np.ndarray, mask_points: np.ndarray,
-                    gap_0: int = 30, gap_1: int = 15, random: bool = True) -> tuple[np.ndarray, np.ndarray]:
+                    gap_0: int = 30, gap_1: int = 15, random: bool = True) -> tp.Tuple[np.ndarray, np.ndarray]:
     crop_img = deepcopy(img)
     all_plant_mask = mask[..., 0] + mask[..., 1]
     all_plant_mask = np.where(all_plant_mask > 0, 1, 0).astype('uint8')

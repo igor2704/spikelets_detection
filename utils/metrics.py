@@ -14,15 +14,19 @@ def iou(mask1: torch.Tensor, mask2: torch.Tensor) -> float:
     return float(intersection / union)
 
 def lerok_metrics(mask_batch: np.ndarray, prediction_batch: np.ndarray,
-                  distance_batch: np.ndarray, normal_mask: bool = False) -> dict[str, list[float]]:
+                  distance_batch: np.ndarray, normal_mask: bool = False,
+                  true_mask_scale=3, pred_mask_scale=5.5) -> dict[str, list[float]]:
     precisions = []
     recalls = []
     f1s = []
     for true_mask, pred_mask, distance in zip(mask_batch, 
                                               prediction_batch, 
                                               distance_batch):
-        confusions = detection_score('', true_mask[0], 
-                                     pred_mask[0], distance, normal_mask=normal_mask)
+        confusions = detection_score('', true_mask[0],
+                                     pred_mask[0], distance,
+                                     normal_mask=normal_mask,
+                                     true_mask_scale=true_mask_scale,
+                                     pred_mask_scale=pred_mask_scale)
 
         if confusions["TP"] + confusions["FP"] == 0:
             continue

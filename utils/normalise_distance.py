@@ -9,9 +9,9 @@ from detection_models.utils.binary_mask_utils import get_central_points
 
 
 def compute_confusion(points, pred_points, max_distance):
-    if len(pred_points) == 0:
+    if len(pred_points) * len(points) == 0:
         return { 'TP': 0, 'FP': 0, 'FN': len(points) }
-
+    
     euclidean = DistanceMetric.get_metric('euclidean')
     distances = euclidean.pairwise(points, pred_points)
 

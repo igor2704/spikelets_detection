@@ -51,8 +51,10 @@ class UNETSpikeletsNet(pl.LightningModule):
                              'val_recall': [],
                              'mae': [],
                              'mse': [],
+                             'mape': [],
                              'iou': []}
         self.best_mae = 9e5
+        self.best_f1 = 0
         if type(self.warmup_start_factor) in [list, tuple]:
             self.warmup_start_factor = self.warmup_start_factor[0]
 
@@ -96,6 +98,7 @@ class UNETSpikeletsNet(pl.LightningModule):
             self.last_result_val_batch = make_grid(predictions, nrow=4)
             self.last_mask_val_batch = make_grid(mask, nrow=4)
             self._save_imgs = True
+         
         
         lerok_metrics_dct = lerok_metrics(mask.detach().cpu().numpy(), 
                                           predictions.detach().cpu().numpy(), 
@@ -110,6 +113,7 @@ class UNETSpikeletsNet(pl.LightningModule):
         self._val_metrics['val_recall'].append(lerok_metrics_dct['recall'])
         self._val_metrics['mae'].append(mae_mse_dct['mae'])
         self._val_metrics['mse'].append(mae_mse_dct['mse'])
+        self._val_metrics['mape'].append(mae_mse_dct['mape'])
         self._val_metrics['iou'].append(float(ious))
     
     def on_validation_epoch_end(self):
@@ -119,10 +123,13 @@ class UNETSpikeletsNet(pl.LightningModule):
         avg_recall = np.mean(self._val_metrics['val_recall'])
         avg_mae = np.mean(self._val_metrics['mae'])
         avg_mse = np.mean(self._val_metrics['mse'])
+        avg_mape = np.mean(self._val_metrics['mape'])
         avg_iou = np.mean(self._val_metrics['iou'])
         lr = get_lr(self.optimizer)
         if avg_mae < self.best_mae:
             self.best_mae = avg_mae
+        if avg_f1 > self.best_f1:
+            self.best_f1 = avg_f1
         
         if self.local_log:
             self.log('val_bce_loss', avg_loss, prog_bar=True)
@@ -130,6 +137,7 @@ class UNETSpikeletsNet(pl.LightningModule):
             self.log('val_precision', avg_precision, prog_bar=True)
             self.log('val_recall', avg_recall, prog_bar=True)
             self.log('val_mse', avg_mse, prog_bar=True)
+            self.log('val_mape', avg_mape, prog_bar=True)
             self.log('val_mae', avg_mae, prog_bar=True)
             self.log('iou', avg_iou, prog_bar=True)
             self.log('lr_by_epoch', lr, prog_bar=True)
@@ -140,6 +148,7 @@ class UNETSpikeletsNet(pl.LightningModule):
                        'val precision by epoch': avg_precision,
                        'val recall by epoch': avg_recall,
                        'val mae by epoch': avg_mae,
+                       'val mape by epoch': avg_mape,
                        'val mse by epoch': avg_mse,
                        'val iou by epoch': avg_iou,
                        'lr by epoch': lr})
@@ -214,6 +223,8 @@ class UNETSpikeletsNet(pl.LightningModule):
         losses = []
         maes = []
         mses = []
+        mapes = []
+        count = 0
         for batch in tqdm(test_dl):
             image, mask, distance_batch = batch
             image = image.to(device)
@@ -232,19 +243,23 @@ class UNETSpikeletsNet(pl.LightningModule):
                                           False)
             mae_mse_dct = mae_mse(mask.detach().cpu().numpy(), 
                                   predictions.detach().cpu().numpy())
-            maes.append(mae_mse_dct['mae'])
-            mses.append(mae_mse_dct['mse'])
-            f1s.append(lerok_metrics_dct['f1'])
-            precisions.append(lerok_metrics_dct['precision'])
-            recalls.append(lerok_metrics_dct['recall'])
-            ious.append(iou(mask, predictions))
-        return {'loss': np.mean(losses),
-                'iou': np.mean(ious),
-                'f1': np.mean(f1s),
-                'precision': np.mean(precisions),
-                'recall': np.mean(recalls),
-                'mae': np.mean(maes),
-                'mse': np.mean(mses)}
+            maes.append(mae_mse_dct['mae'] * len(mask))
+            mses.append(mae_mse_dct['mse'] * len(mask))
+            mapes.append(mae_mse_dct['mape'] * len(mask))
+            f1s.append(lerok_metrics_dct['f1'] * len(mask))
+            precisions.append(lerok_metrics_dct['precision'] * len(mask))
+            recalls.append(lerok_metrics_dct['recall'] * len(mask))
+            ious.append(iou(mask, predictions) * len(mask))
+            count += len(mask)
+            
+        return {'loss': np.sum(losses) / count,
+                'iou': np.sum(ious) / count,
+                'f1': np.sum(f1s) / count,
+                'precision': np.sum(precisions) / count,
+                'recall': np.sum(recalls) / count,
+                'mae': np.sum(maes) / count,
+                'mse': np.sum(mses) / count,
+                'mape': np.sum(mapes) / count}
         
     def load(self, path: str, device: str = 'cuda'):
         checkpoint = torch.load(path, map_location=device)

@@ -64,6 +64,9 @@ def mae_mse(true_mask_batch: np.ndarray, pred_mask_batch: np.ndarray,
             pred_mask_count.append(len(get_central_points(pred_mask[0])))
     true_mask_count = np.array(true_mask_count)
     pred_mask_count = np.array(pred_mask_count)
+    mape_true = true_mask_count[true_mask_count > 0]
+    mape_predict = pred_mask_count[true_mask_count > 0]
     return {'mse': ((true_mask_count - pred_mask_count) ** 2).mean(),
-            'mae': (np.abs(true_mask_count - pred_mask_count)).mean()}
+            'mae': (np.abs(true_mask_count - pred_mask_count)).mean(),
+            'mape': (np.abs((mape_true - mape_predict) / mape_true)).mean()}
       

@@ -7,7 +7,7 @@ from omegaconf import DictConfig
 from torch.utils.data import Dataset
 
 from detection_models.datasets_and_augmentations.unet_aug import get_transforms
-from detection_models.utils.binary_mask_utils import get_random_crops, get_max_contour_mask, get_radius
+from detection_models.utils.binary_mask_utils import get_random_crops, get_max_contour_mask, get_radius, generate_binary_mask
 
 
 class SpikeletsDataset(Dataset):
@@ -16,6 +16,7 @@ class SpikeletsDataset(Dataset):
                  point_mask_dir_path: str | None, 
                  segmentation_dir_path: str,
                  cfg_aug: DictConfig,
+                 radius: float = 1,
                  train: bool = True):
         filenames_image = set([name.split('.')[0] for name in os.listdir(image_dir_path)])
         filenames_mask_points = set([name.split('.')[0] for name in os.listdir(point_mask_dir_path)])
@@ -26,6 +27,7 @@ class SpikeletsDataset(Dataset):
         self.point_mask_dir_path = point_mask_dir_path
         self.segmentation_dir_path = segmentation_dir_path
         self.train = train
+        self.radius = radius
         self.transform = get_transforms(cfg_aug)
 
     def __getitem__(self, index):
@@ -40,9 +42,20 @@ class SpikeletsDataset(Dataset):
         segmentation_mask = cv2.imread(segmentation_mask_path)
         segmentation_mask = cv2.cvtColor(segmentation_mask, cv2.COLOR_BGR2RGB)
         
+        if np.all(np.equal(point_mask, np.zeros_like(point_mask))) or len(np.array(point_mask).shape) < 2:
+            print(img_path)
+            print(segmentation_mask_path)
+            print(point_mask_path)
+        
         crop_img, crop_mask = get_random_crops(img, segmentation_mask, point_mask, random=self.train)
         crop_mask_dist = cv2.resize(crop_mask, self.transform['size'])
         distance = 3 * get_radius(crop_mask_dist)
+        
+        crop_mask = generate_binary_mask(crop_mask, self.radius)
+        if np.all(np.equal(crop_mask, np.zeros_like(crop_mask))) or len(np.array(crop_mask).shape) < 2:
+            print(img_path)
+            print(segmentation_mask_path)
+            print(point_mask_path)
         
         if self.train:
             augmentations =  self.transform['train'](image=crop_img, mask=crop_mask)

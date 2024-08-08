@@ -77,3 +77,14 @@ def get_random_crops(img: np.ndarray, mask: np.ndarray, mask_points: np.ndarray,
                                  max(crop_body[3], crop_plant[3]) + 1)
         
     return crop_img[d_cr:u_cr, l_cr:r_cr, :], mask_points[d_cr:u_cr, l_cr:r_cr]
+
+def generate_binary_mask(mask: np.ndarray,
+                         radius: float = 1):
+    centers = get_central_points(mask)
+    old_radius = get_radius(mask)
+    new_mask = np.zeros_like(mask)
+    for center in centers:
+        new_mask = cv2.circle(new_mask, tuple(center), 
+                              max(1, int(old_radius * radius)), 1, -1)
+    return new_mask
+

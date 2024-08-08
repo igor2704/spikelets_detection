@@ -61,8 +61,10 @@ class NormalUNETSpikeletsNet(pl.LightningModule):
                              'val_precision': [],
                              'val_recall': [],
                              'mae': [],
-                             'mse': []}
+                             'mse': [],
+                             'mape': []}
         self.best_mae = 9e5
+        self.best_f1 = 0
         if type(self.warmup_start_factor) in [list, tuple]:
             self.warmup_start_factor = self.warmup_start_factor[0]
         self.loss_name = loss
@@ -116,6 +118,7 @@ class NormalUNETSpikeletsNet(pl.LightningModule):
         self._val_metrics['val_recall'].append(lerok_metrics_dct['recall'])
         self._val_metrics['mae'].append(mae_mse_dct['mae'])
         self._val_metrics['mse'].append(mae_mse_dct['mse'])
+        self._val_metrics['mape'].append(mae_mse_dct['mape'])
     
     def on_validation_epoch_end(self):
         avg_loss = np.mean(self._val_metrics['val_loss'])
@@ -124,9 +127,12 @@ class NormalUNETSpikeletsNet(pl.LightningModule):
         avg_recall = np.mean(self._val_metrics['val_recall'])
         avg_mae = np.mean(self._val_metrics['mae'])
         avg_mse = np.mean(self._val_metrics['mse'])
+        avg_mape = np.mean(self._val_metrics['mape'])
         lr = get_lr(self.optimizer)
         if avg_mae < self.best_mae:
             self.best_mae = avg_mae
+        if avg_f1 > self.best_f1:
+            self.best_f1 = avg_f1
         
         if self.local_log:
             self.log(f'val_{self.loss_name}_loss', avg_loss, prog_bar=True)
@@ -135,6 +141,7 @@ class NormalUNETSpikeletsNet(pl.LightningModule):
             self.log('val_recall', avg_recall, prog_bar=True)
             self.log('val_mse', avg_mse, prog_bar=True)
             self.log('val_mae', avg_mae, prog_bar=True)
+            self.log('val_mape', avg_mape, prog_bar=True)
             self.log('lr_by_epoch', lr, prog_bar=True)
         
         if self.wandb_log:
@@ -144,6 +151,7 @@ class NormalUNETSpikeletsNet(pl.LightningModule):
                        'val recall by epoch': avg_recall,
                        'val mae by epoch': avg_mae,
                        'val mse by epoch': avg_mse,
+                       'val mape by epoch': avg_mape,
                        'lr by epoch': lr})
             
         self.number_epoch += 1
@@ -225,6 +233,8 @@ class NormalUNETSpikeletsNet(pl.LightningModule):
         losses = []
         maes = []
         mses = []
+        mapes = []
+        count = 0
         for batch in tqdm(test_dl):
             image, mask, distance_batch = batch
             image = image.to(device)
@@ -247,18 +257,21 @@ class NormalUNETSpikeletsNet(pl.LightningModule):
             mae_mse_dct = mae_mse(mask.detach().cpu().numpy(), 
                               predictions.detach().cpu().numpy(),
                               True, self.threshold_scale_true_mask, self.threshold_scale_pred_mask)
-            maes.append(mae_mse_dct['mae'])
-            mses.append(mae_mse_dct['mse'])
-            f1s.append(lerok_metrics_dct['f1'])
-            precisions.append(lerok_metrics_dct['precision'])
-            recalls.append(lerok_metrics_dct['recall'])
+            maes.append(mae_mse_dct['mae'] * len(mask))
+            mses.append(mae_mse_dct['mse'] * len(mask))
+            mapes.append(mae_mse_dct['mape'] * len(mask))
+            f1s.append(lerok_metrics_dct['f1'] * len(mask))
+            precisions.append(lerok_metrics_dct['precision'] * len(mask))
+            recalls.append(lerok_metrics_dct['recall'] * len(mask))
+            count += len(mask)
 
-        return {'loss': np.mean(losses), 
-                'f1': np.mean(f1s),
-                'precision': np.mean(precisions),
-                'recall': np.mean(recalls),
-                'mae': np.mean(maes),
-                'mse': np.mean(mses)}
+        return {'loss': np.sum(losses) / count, 
+                'f1': np.sum(f1s) / count,
+                'precision': np.sum(precisions) / count,
+                'recall': np.sum(recalls) / count,
+                'mae': np.sum(maes) / count,
+                'mse': np.sum(mses) / count,
+                'mape': np.sum(mapes) / count}
         
     def load(self, path: str, device: str = 'cuda'):
         checkpoint = torch.load(path, map_location=device)

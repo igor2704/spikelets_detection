@@ -21,9 +21,11 @@ def main(cfg: DictConfig):
         run = wandb.init(config=cfg_dict, project=cfg.pathes.wandb_project, 
                          name=cfg.pathes.wandb_name)
     train_ds = SpikeletsDataset(cfg.pathes.train_path, cfg.pathes.train_mask_path, 
-                                cfg.pathes.train_mask_segment_path, cfg.augmentation_params)
+                                cfg.pathes.train_mask_segment_path, cfg.augmentation_params, 
+                                cfg.model_params.radius)
     val_ds = SpikeletsDataset(cfg.pathes.val_path, cfg.pathes.val_mask_path, 
-                              cfg.pathes.val_mask_segment_path, cfg.augmentation_params, train=False)
+                              cfg.pathes.val_mask_segment_path, cfg.augmentation_params, 
+                              cfg.model_params.radius, train=False)
     train_dl = DataLoader(train_ds, cfg.training_params.batch_size,
                           num_workers=cfg.training_params.num_workers, shuffle=True)
     val_dl = DataLoader(val_ds, cfg.training_params.batch_size,

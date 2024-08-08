@@ -27,7 +27,7 @@ def main(cfg: DictConfig):
         torch.cuda.manual_seed(seed_value)
         torch.cuda.manual_seed_all(seed_value)
     test_ds = SpikeletsDataset(cfg.pathes.test_path, cfg.pathes.test_mask_path, cfg.pathes.test_mask_segment_path,
-                               cfg.augmentation_params, train=False)
+                               cfg.augmentation_params, cfg.model_params.radius, train=False)
     test_dl = DataLoader(test_ds, cfg.test_params.batch_size,
                           num_workers=cfg.test_params.num_workers, shuffle=False)
     model = UNETSpikeletsNet(lr=cfg.model_params.lr,

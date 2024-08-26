@@ -63,6 +63,27 @@ def main(cfg: DictConfig):
         elif number_iter == 7:
             number_iter += 1
             return 4.727 * (2 - 0.7582)
+        elif number_iter == 8:
+            number_iter += 1
+            return 3.686 * (2 - 0.8638)
+        elif number_iter == 9:
+            number_iter += 1
+            return 2.625 * (2 - 0.8802)
+        elif number_iter == 10:
+            number_iter += 1
+            return 3.745 * (2 - 0.8217)
+        elif number_iter == 11:
+            number_iter += 1
+            return 10000000
+        elif number_iter == 12:
+            number_iter += 1
+            return 3.943 * (2 - 0.8092)
+        elif number_iter == 13:
+            number_iter += 1
+            return 10000000
+        elif number_iter == 14:
+            number_iter += 1
+            return 5.177 * (2 - 0.7809)
         params_dct = {'lr': lr,
                       'scale coeff': coeff,
                       'cos_annealing_eta_min': cos_annealing_eta_min,

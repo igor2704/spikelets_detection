@@ -1,15 +1,15 @@
 model_params:
     loss: 'kld' # or 'kld'
-    lr: 0.0007083
+    lr: 0.0004753
     encoder_name: 'efficientnet-b4' 
     warmup_duration: 5
     warmup_start_factor: 0.0001
-    cos_annealing_eta_min: 0.00005
+    cos_annealing_eta_min: 0.0000096733
     threshold_scale_true_mask: 3
-    threshold_scale_pred_mask: 4.752
+    threshold_scale_pred_mask: 5.5786
 mask_params:
     min_val: 0.0
-    coeff: 35531.427
+    coeff: 28659.12988
     standard_mask_scale: 30000
 augmentation_params:
     image_height: 512
@@ -34,7 +34,7 @@ augmentation_params:
     p_to_gray: 0.1
 training_params:
     batch_size: 8
-    max_epochs: 150
+    max_epochs: 200
     devices: [0]
     accelerator: 'gpu'
     patience: 20
@@ -56,7 +56,7 @@ test_params:
     num_workers: 23
 pathes:
     wandb_project: 'final_detection_models'
-    wandb_name: 'ce'
+    wandb_name: 'UNET_normal_masks'
     dirpath_models_saving: '/home/jupyter-igor_busov/detection/models'
     train_path: '/home/jupyter-igor_busov/detection/data/train'
     # test_path: '/home/jupyter-igor_busov/detection/data/test'
@@ -84,7 +84,7 @@ hyperparameters:
     thr_scale_pred_msk: [2, 9]
     coeff: [5000, 500000]
     epoches: 30
-    n_initial_points: 15
-    n_calls: 30
+    n_initial_points: 20
+    n_calls: 35
     losses: ['kld', 'ce']
     

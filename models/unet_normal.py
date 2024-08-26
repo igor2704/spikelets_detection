@@ -21,7 +21,7 @@ from detection_models.utils.get_params import get_lr
 class NormalUNETSpikeletsNet(pl.LightningModule):
     
     def __init__(self,
-                 loss: str = 'ce',
+                 loss: str = 'kld',
                  lr: float = 9e-4,
                  max_epochs: int = 100, 
                  encoder_name: str = 'efficientnet-b4', 

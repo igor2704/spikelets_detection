@@ -1,10 +1,10 @@
 model_params:
-    lr: 0.0007394
-    encoder_name: 'efficientnet-b4' 
+    lr: 0.00039879
+    encoder_name: 'timm-regnetx_032' 
     warmup_duration: 5
     warmup_start_factor: 0.0001
-    cos_annealing_eta_min: 0.000001496
-    radius: 1
+    cos_annealing_eta_min: 0.0000020792
+    radius: 1.49504
 augmentation_params:
     image_height: 512
     image_width: 224
@@ -28,7 +28,7 @@ augmentation_params:
     p_to_gray: 0.1
 training_params:
     batch_size: 8
-    max_epochs: 150
+    max_epochs: 400
     devices: [1]
     accelerator: 'gpu'
     patience: 20

@@ -43,7 +43,7 @@ training_params:
 infer_params:
     in_dir_path: '/home/jupyter-igor_busov/detection/data/holdout'
     out_dir_path: '/home/jupyter-igor_busov/detection/infer_example'
-    model_path: '/home/jupyter-igor_busov/detection/models/unet_kld_final.ckpt'
+    model_path: '/home/jupyter-igor_busov/detection/models/unet_kld_final_old.ckpt'
     segmentation_mask_dir_path: '/home/jupyter-igor_busov/detection/data/holdout_mask_segmentation'
     batch_size: 8
     device: 'cuda'
@@ -87,4 +87,11 @@ hyperparameters:
     n_initial_points: 20
     n_calls: 35
     losses: ['kld', 'ce']
-    
+defaults:  
+  - _self_  
+  - override hydra/hydra_logging: disabled  
+  - override hydra/job_logging: disabled
+hydra:  
+  output_subdir: null
+  run:  
+    dir: .

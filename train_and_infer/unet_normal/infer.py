@@ -94,13 +94,13 @@ def infer_kld(infer_dl, model, out_dir_path, in_dir_path, in_mask_dir_path, devi
 @hydra.main(version_base=None, config_path='.', config_name='config_normal')
 def main(cfg: DictConfig):
     # os.environ['KMP_DUPLICATE_LIB_OK']='True'
-    
     infer_ds = NormalSpikeletsInferDataset(cfg.infer_params.in_dir_path, 
                                            cfg.infer_params.segmentation_mask_dir_path, 
                                            cfg.augmentation_params)
     infer_dl = DataLoader(infer_ds, cfg.infer_params.batch_size,
                           num_workers=cfg.infer_params.num_workers, shuffle=False)
-    model = NormalUNETSpikeletsNet().to(cfg.infer_params.device)
+    model = NormalUNETSpikeletsNet(wandb_log=False,
+                                   local_log=False).to(cfg.infer_params.device)
     model.load(cfg.infer_params.model_path)
     infer_kld(infer_dl, model, cfg.infer_params.out_dir_path,
               cfg.infer_params.in_dir_path, cfg.infer_params.segmentation_mask_dir_path,

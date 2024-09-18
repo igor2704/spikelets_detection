@@ -210,6 +210,7 @@ class NormalUNETSpikeletsNet(pl.LightningModule):
         return [optimizer], [lr_scheduler]   
 
     def predict(self, x: torch.tensor):
+        self.model.eval()
         with torch.no_grad():
             prediction = torch.squeeze(self.softmax(self.model(x).flatten(-2)), 1)
             return prediction.reshape((x.shape[0], x.shape[-2], x.shape[-1])).float().detach().cpu().numpy()

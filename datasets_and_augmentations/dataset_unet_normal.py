@@ -102,7 +102,8 @@ class NormalSpikeletsInferDataset(Dataset):
         self.rewrite_rotate = rewrite_rotate
 
     def __getitem__(self, index):
-        img_path = os.path.join(self.image_dir_path, self.filenames[index] + '.jpg')
+        # jpg
+        img_path = os.path.join(self.image_dir_path, self.filenames[index] + '.png')
         segmentation_mask_path = os.path.join(self.segmentation_dir_path, self.filenames[index] + '.png')
         
         img = cv2.imread(img_path)

@@ -67,7 +67,8 @@ def infer_kld(infer_dl, model, out_dir_path, in_dir_path, in_mask_dir_path, devi
             centers = get_central_points_normal_mask(pred, scale=scale)
             names_lst.append(name)
             
-            img_path = os.path.join(in_dir_path, name + '.jpg')
+            # jpg
+            img_path = os.path.join(in_dir_path, name + '.png')
             segmentation_mask_path = os.path.join(in_mask_dir_path, name + '.png')
             img = cv2.imread(img_path)
             img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)

@@ -32,66 +32,6 @@ def main(cfg: DictConfig):
     @use_named_args(space)
     def objective(lr, cos_annealing_eta_min, radius, encoder):
         nonlocal number_iter
-        if number_iter == 0:
-            number_iter += 1
-            return 2.96414 * (2 - 0.86067)
-        elif number_iter == 1:
-            number_iter += 1
-            return 4.19675 * (2 - 0.8027)
-        elif number_iter == 2:
-            number_iter += 1
-            return 5 * 37.77377 * (2 - 0.0081023)
-        elif number_iter == 3:
-            number_iter += 1
-            return 13.38867 * (2 - 0.88383)
-        elif number_iter == 4:
-            number_iter += 1
-            return 5 * 53.25668 * (2 - 0.0069558)
-        elif number_iter == 5:
-            number_iter += 1
-            return 21.61789 * (2 - 0.87394)
-        elif number_iter == 6:
-            number_iter += 1
-            return 5 * 40.57066 * (2 - 0.72734)
-        elif number_iter == 7:
-            number_iter += 1
-            return 8.80119 * (2 - 0.89251)
-        elif number_iter == 8:
-            number_iter += 1
-            return 30.4169 * (2 - 0.80546)
-        elif number_iter == 9:
-            number_iter += 1
-            return 5 * 45.12631 * (2 - 0.5358)
-        elif number_iter == 10:
-            number_iter += 1
-            return 5 * 10.26095 * (2 - 0.50574)
-        elif number_iter == 11:
-            number_iter += 1
-            return 5 * 23.75424 * (2 - 0.7818)
-        elif number_iter == 12:
-            number_iter += 1
-            return 8.97583 * (2 - 0.88978)
-        elif number_iter == 13:
-            number_iter += 1
-            return 7.2141 * (2 - 0.8496)
-        elif number_iter == 14:
-            number_iter += 1
-            return 15.25994 * (2 - 0.8605)
-        elif number_iter == 15:
-            number_iter += 1
-            return 14.52761 * (2 - 0.8847)
-        elif number_iter == 16:
-            number_iter += 1
-            return 5 * 26.07448 * (2 - 0.77549)
-        elif number_iter == 17:
-            number_iter += 1
-            return 5 * 25.425 * (2 - 0.74141)
-        elif number_iter == 18:
-            number_iter += 1
-            return 30.69287 * (2 - 0.80405)
-        elif number_iter == 19:
-            number_iter += 1
-            return 5 * 107.68242 * (2 - 0.26986)
         
         params_dct = {'lr': lr,
                       'cos_annealing_eta_min': cos_annealing_eta_min,

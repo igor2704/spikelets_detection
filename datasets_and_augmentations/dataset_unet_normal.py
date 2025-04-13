@@ -103,7 +103,7 @@ class NormalSpikeletsInferDataset(Dataset):
 
     def __getitem__(self, index):
         # jpg
-        img_path = os.path.join(self.image_dir_path, self.filenames[index] + '.png')
+        img_path = os.path.join(self.image_dir_path, self.filenames[index] + '.jpg')
         segmentation_mask_path = os.path.join(self.segmentation_dir_path, self.filenames[index] + '.png')
         
         img = cv2.imread(img_path)

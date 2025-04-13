@@ -1,15 +1,15 @@
 model_params:
     loss: 'kld' # or 'kld'
-    lr: 0.0004753
+    lr: 0.00098492
     encoder_name: 'efficientnet-b4' 
     warmup_duration: 5
     warmup_start_factor: 0.0001
-    cos_annealing_eta_min: 0.0000096733
+    cos_annealing_eta_min: 0.0000063723
     threshold_scale_true_mask: 3
-    threshold_scale_pred_mask: 5.5786
+    threshold_scale_pred_mask: 4.66061
 mask_params:
     min_val: 0.0
-    coeff: 28659.12988
+    coeff: 89201.72163
     standard_mask_scale: 30000
 augmentation_params:
     image_height: 512
@@ -43,14 +43,14 @@ training_params:
 infer_params:
     in_dir_path: '/home/jupyter-igor_busov/detection/data/holdout'
     out_dir_path: '/home/jupyter-igor_busov/detection/infer_example'
-    model_path: '/home/jupyter-igor_busov/detection/models/unet_kld_final_old.ckpt'
+    model_path: '/home/jupyter-igor_busov/detection/models/unet_normal_efficientnet-b4.ckpt'
     segmentation_mask_dir_path: '/home/jupyter-igor_busov/detection/data/holdout_mask_segmentation'
     batch_size: 8
     device: 'cuda'
     num_workers: 23
 test_params:
-    model_path: '/home/jupyter-igor_busov/detection/models/unet_kld_final.ckpt'
-    out_json_file_name: '/home/jupyter-igor_busov/detection/test_result/holdout_res.json'
+    model_path: '/home/jupyter-igor_busov/detection/models/unet_normal_efficientnet-b4.ckpt'
+    out_json_file_name: '/home/jupyter-igor_busov/detection/test_result/test_res.json'
     batch_size: 8
     device: 'cuda'
     num_workers: 23
@@ -59,34 +59,34 @@ pathes:
     wandb_name: 'UNET_normal_masks'
     dirpath_models_saving: '/home/jupyter-igor_busov/detection/models'
     train_path: '/home/jupyter-igor_busov/detection/data/train'
-    # test_path: '/home/jupyter-igor_busov/detection/data/test'
+    test_path: '/home/jupyter-igor_busov/detection/data/test'
     val_path: '/home/jupyter-igor_busov/detection/data/val'
-    test_path: '/home/jupyter-igor_busov/detection/data/holdout'
+    #test_path: '/home/jupyter-igor_busov/detection/data/holdout'
     train_mask_path: '/home/jupyter-igor_busov/detection/data/train_mask'
-    # test_mask_path: '/home/jupyter-igor_busov/detection/data/test_mask'
+    test_mask_path: '/home/jupyter-igor_busov/detection/data/test_mask'
     val_mask_path: '/home/jupyter-igor_busov/detection/data/val_mask'
-    test_mask_path: '/home/jupyter-igor_busov/detection/data/holdout_mask'
+    # test_mask_path: '/home/jupyter-igor_busov/detection/data/holdout_mask'
     train_mask_segment_path: '/home/jupyter-igor_busov/detection/data/train_mask_segmentation'
-    # test_mask_segment_path: '/home/jupyter-igor_busov/detection/data/test_mask_segmentation'
+    test_mask_segment_path: '/home/jupyter-igor_busov/detection/data/test_mask_segmentation'
     val_mask_segment_path: '/home/jupyter-igor_busov/detection/data/val_mask_segmentation'
-    test_mask_segment_path: '/home/jupyter-igor_busov/detection/data/holdout_mask_segmentation'
+    # test_mask_segment_path: '/home/jupyter-igor_busov/detection/data/holdout_mask_segmentation'
     train_json_coords_path: '/home/jupyter-igor_busov/detection/data/centers/train.json'
     val_json_coords_path: '/home/jupyter-igor_busov/detection/data/centers/val.json'
-    # test_json_coords_path: '/home/jupyter-igor_busov/detection/data/centers/test.json'
-    test_json_coords_path: '/home/jupyter-igor_busov/detection/data/centers/holdout.json'
+    test_json_coords_path: '/home/jupyter-igor_busov/detection/data/centers/test.json'
+    # test_json_coords_path: '/home/jupyter-igor_busov/detection/data/centers/holdout.json'
     standard_mask_path: '/home/jupyter-igor_busov/detection/detection_models/standard_normal_mask.npy'
 hyperparameters:
     encoders: ['efficientnet-b3', 'efficientnet-b4', 'mit_b2', 'mit_b1',
                'timm-resnest26d', 'timm-regnetx_032', 'timm-res2next50',
                'timm-gernet_m','timm-efficientnet-b4', 'timm-efficientnet-b3']
-    lr: [0.00001, 0.001]
+    lr: [0.0001, 0.001]
     cos_annealing_eta_min: [0.000001, 0.00005]
     thr_scale_pred_msk: [2, 9]
     coeff: [5000, 500000]
     epoches: 30
-    n_initial_points: 20
+    n_initial_points: 25
     n_calls: 35
-    losses: ['kld', 'ce']
+    losses: ['kld']
 defaults:  
   - _self_  
   - override hydra/hydra_logging: disabled  

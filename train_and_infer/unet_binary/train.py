@@ -32,11 +32,11 @@ def main(cfg: DictConfig):
                         num_workers=cfg.training_params.num_workers, shuffle=False)
     
     MyTrainingModuleCheckpoint = ModelCheckpoint(dirpath=cfg.pathes.dirpath_models_saving,
-                                            filename='unet_binary_{epoch}-{val_f1:.3f}' + f'_{cfg.model_params.encoder_name}',
-                                            monitor='val_f1',
-                                            mode='max',
+                                            filename='unet_binary_{epoch}-{val_mae:.3f}' + f'_{cfg.model_params.encoder_name}',
+                                            monitor='val_mae',
+                                            mode='min',
                                             save_top_k=1)
-    MyEarlyStopping = EarlyStopping(monitor='val_f1', mode='max', 
+    MyEarlyStopping = EarlyStopping(monitor='val_mae', mode='min', 
                                     patience=cfg.training_params.patience, verbose=True)
     callbacks = [MyEarlyStopping, MyTrainingModuleCheckpoint]
 

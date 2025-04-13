@@ -105,7 +105,7 @@ class SpikeletsInferDataset(Dataset):
         
         crop_img, _ = get_random_crops(img, segmentation_mask, np.zeros_like(img), random=False)
         
-        augmentations = transforms['test'](image=crop_img)
+        augmentations = self.transform['test'](image=crop_img)
         
         return augmentations['image'], self.filenames[index]
     

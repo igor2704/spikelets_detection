@@ -32,8 +32,8 @@ def get_max_contour_mask(mask: np.ndarray) -> np.ndarray:
 
 def get_radius(mask: np.ndarray) -> np.ndarray:
     try:
-        contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-        max_contour = contours[np.argmax([cv2.contourArea(contour) for contour in contours])]
+        contours, _ = cv2.findContours(cv2.convertScaleAbs(mask), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+        max_contour = contours[np.argmax([cv2.contourArea(contour) for contour in contours])]   
         area = cv2.contourArea(max_contour)
     except:
         area = 0
@@ -78,13 +78,26 @@ def get_random_crops(img: np.ndarray, mask: np.ndarray, mask_points: np.ndarray,
         
     return crop_img[d_cr:u_cr, l_cr:r_cr, :], mask_points[d_cr:u_cr, l_cr:r_cr]
 
+def get_min_radius(coords: list):
+    min_dist = 99999999
+    for i in range(len(coords)):
+        for j in range(i + 1, len(coords)):
+            x_i = coords[i][0]
+            x_j = coords[j][0]
+            y_i = coords[i][1]
+            y_j = coords[j][1]
+            dist_i_j = np.sqrt((x_i - x_j) ** 2 + (y_i - y_j) ** 2)
+            if dist_i_j < min_dist:
+                min_dist = dist_i_j
+    return int((min_dist / 2) * 0.9)
+
 def generate_binary_mask(mask: np.ndarray,
                          radius: float = 1):
     centers = get_central_points(mask)
     old_radius = get_radius(mask)
     new_mask = np.zeros_like(mask)
+    new_radius = max(1, min(int(old_radius * radius), get_min_radius(centers)))
     for center in centers:
         new_mask = cv2.circle(new_mask, tuple(center), 
-                              max(1, int(old_radius * radius)), 1, -1)
+                              new_radius, 1, -1)
     return new_mask
-

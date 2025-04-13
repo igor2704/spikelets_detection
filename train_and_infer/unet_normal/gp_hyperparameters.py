@@ -41,49 +41,70 @@ def main(cfg: DictConfig):
         nonlocal number_iter
         if number_iter == 0:
             number_iter += 1
-            return 2.91 * (2 - 0.8634)
+            return 3.41336 * (2 - 0.84601)
         elif number_iter == 1:
             number_iter += 1
-            return 14.682 * (2 - 0.6246)
+            return 5 * 7.67212 * (2 - 0.76376)
         elif number_iter == 2:
             number_iter += 1
-            return 10000000
+            return 5 * 21.11551 * (2 - 0.60535)
         elif number_iter == 3:
             number_iter += 1
-            return 10000000
+            return 5 * 7.69302 * (2 - 0.79589)
         elif number_iter == 4:
             number_iter += 1
-            return 6.078 * (2 - 0.7239)
+            return 4.11391 * (2 - 0.81705)
         elif number_iter == 5:
             number_iter += 1
-            return 2.867 * (2 - 0.8715)
-        elif number_iter == 6:
+            return 2.82129 * (2 - 0.89331)
+        elif number_iter == 6: # 
             number_iter += 1
-            return 5.497 * (2 - 0.8338)
+            return 5 * 14.58585 * (2 - 0.24309)
         elif number_iter == 7:
             number_iter += 1
-            return 4.727 * (2 - 0.7582)
+            return 3.99521 * (2 - 0.81298)
         elif number_iter == 8:
             number_iter += 1
-            return 3.686 * (2 - 0.8638)
+            return 4.56067 * (2 - 0.89359)
         elif number_iter == 9:
             number_iter += 1
-            return 2.625 * (2 - 0.8802)
+            return 3.08658 * (2 - 0.89301)
         elif number_iter == 10:
             number_iter += 1
-            return 3.745 * (2 - 0.8217)
+            return 5 * 7.09243 * (2 - 0.63782)
         elif number_iter == 11:
             number_iter += 1
-            return 10000000
+            return 5 * 17.67704 * (2 - 0.18849)
         elif number_iter == 12:
             number_iter += 1
-            return 3.943 * (2 - 0.8092)
+            return 5 * 17.8773 * (2 - 0.084844)
         elif number_iter == 13:
             number_iter += 1
-            return 10000000
+            return 5 * 8.69248 * (2 - 0.78852)
         elif number_iter == 14:
             number_iter += 1
-            return 5.177 * (2 - 0.7809)
+            return 3.5596 * (2 - 0.8476)
+        elif number_iter == 15:
+            number_iter += 1
+            return 2.75273 * (2 - 0.90418)
+        elif number_iter == 16:
+            number_iter += 1
+            return 8.35006 * (2 - 0.89398)
+        elif number_iter == 17:
+            number_iter += 1
+            return 2.45315 * (2 - 0.90538)
+        elif number_iter == 18:
+            number_iter += 1
+            return 2.96872 * (2 - 0.88485)
+        elif number_iter == 19:
+            number_iter += 1
+            return 4.23405 * (2 - 0.8493)
+        elif number_iter == 20:
+            number_iter += 1
+            return 2.18625 * (2 - 0.89988)
+        elif number_iter == 21:
+            number_iter += 1
+            return 5 * 18.76922 * (2 - 0.79589)
         params_dct = {'lr': lr,
                       'scale coeff': coeff,
                       'cos_annealing_eta_min': cos_annealing_eta_min,
@@ -134,12 +155,12 @@ def main(cfg: DictConfig):
         wandb.finish()
         
         number_iter += 1
-        if module.best_f1 > 0.6:
+        if module.best_f1 > 0.8:
             print(f'mae: {module.best_mae} f1: {module.best_f1}')
             return module.best_mae * (2 - module.best_f1)
         else:
             print(f'mae: {module.best_mae} f1: {module.best_f1}')
-            return 10000000
+            return 5 * module.best_mae * (2 - module.best_f1)
     
     number_iter = 0
     res_gp = gp_minimize(objective, space, n_calls=cfg.hyperparameters.n_calls, 
